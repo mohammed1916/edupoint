@@ -1,0 +1,23 @@
+.consentBanner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(30,30,40,0.95);
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  /* z-index: 12000; */
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.2);
+}
+
+.acceptButton {
+  margin-left: 16px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  background: #4f8cff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}

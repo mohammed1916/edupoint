@@ -1,0 +1,75 @@
+html, body, #__next {
+  min-height: 100vh;
+  width: 100vw;
+  background: #18181b;
+  color: #f3f4f6;
+}
+
+
+input, select, button {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  background: #23232a;
+  color: #f3f4f6;
+  border: 1px solid #333;
+}
+button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #1d4ed8;
+}
+input:focus, select:focus, button:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+label {
+  font-weight: 500;
+  color: #334155;
+}
+label {
+  color: #d1d5db;
+}
+h1, h2, h3 {
+  color: #a5b4fc;
+}
+h2, h3 {
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+.result-card, .recommendations-section {
+  background: rgba(36, 40, 54, 0.85);
+  color: #f3f4f6;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+footer, .acrylicFooter {
+  background: rgba(30, 30, 40, 0.85);
+  color: #f3f4f6;
+}
+
+@keyframes acrylicMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.main-container {
+  background: linear-gradient(120deg, #6366f1 0%, #2563eb 40%, #a5b4fc 80%, #6366f1 100%);
+  background-size: 200% 200%;
+  animation: acrylicMove 16s ease-in-out infinite;
+  border-radius: 0;
+  color: #f3f4f6;
+}
