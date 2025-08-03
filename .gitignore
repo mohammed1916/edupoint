@@ -35,3 +35,4 @@ htmlcov/
 .pytype/
 notebooks/unsloth_compiled_cache
 notebooks/local_fip256_dataset
+*.arrow
