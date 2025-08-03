@@ -179,5 +179,5 @@ async def get_profile(session: str = Cookie(default=None, alias=SESSION_COOKIE_N
 
 @app.post("/auth/signout")
 async def signout(response: Response):
-    response.delete_cookie(key=SESSION_COOKIE_NAME)
+    response.delete_cookie(key=SESSION_COOKIE_NAME, path="/", samesite="lax")
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Signed out"})

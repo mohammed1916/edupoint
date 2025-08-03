@@ -4,6 +4,7 @@ import store from '../redux/store';
 import React, { useState } from 'react';
 import ConsentBanner from '../components/ConsentBanner';
 import { app, getAnalytics } from '../services/firebase';
+import FirebaseNavbar from '../components/FirebaseNavbar';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
@@ -17,6 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <Provider store={store}>
+      <FirebaseNavbar />
       <Component {...pageProps} />
       {!analyticsEnabled && <ConsentBanner onAccept={handleConsent} />}
     </Provider>
