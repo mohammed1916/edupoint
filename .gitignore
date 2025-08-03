@@ -33,3 +33,5 @@ htmlcov/
 .dmypy.json
 .pyre/
 .pytype/
+notebooks/unsloth_compiled_cache
+notebooks/local_fip256_dataset
