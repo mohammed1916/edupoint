@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import GoogleSignIn from './GoogleSignIn';
 import { jwtDecode } from "jwt-decode";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
 const GoogleCalendar = () => {
   const [token, setToken] = useState<string | null>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -24,7 +26,7 @@ const GoogleCalendar = () => {
     }
   };
 
-  const handleSignIn = (idToken: string) => {
+  const handleSignIn = async (idToken: string) => {
     setToken(idToken);
     try {
       const decoded: any = jwtDecode(idToken);
@@ -32,10 +34,31 @@ const GoogleCalendar = () => {
     } catch (e) {
       setProfile(null);
     }
+    // Send idToken to backend
+    const res = await fetch(`${API_BASE_URL}/auth/google`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ idToken }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setProfile({ name: data.name, picture: data.picture });
+    }
     // You need to exchange the ID token for an access token on your backend
     // For demo, just show signed-in state
     // fetchEvents(accessToken); // Uncomment when you have access token
   };
+
+  React.useEffect(() => {
+    fetch(`${API_BASE_URL}/auth/profile`, {
+      credentials: "include",
+    })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (data && data.name) setProfile({ name: data.name, picture: data.picture });
+      });
+  }, []);
 
   return (
     <div style={{marginTop: '2rem'}}>

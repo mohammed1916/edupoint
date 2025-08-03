@@ -2,66 +2,42 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from '../styles/navbar.module.css';
 import GoogleSignIn from './GoogleSignIn';
-import { jwtDecode } from 'jwt-decode';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 const Navbar = () => {
-  const [token, setToken] = useState<string | null>(null);
   const [profile, setProfile] = useState<{ name?: string; picture?: string } | null>(null);
 
+  // On mount, fetch profile from backend
   useEffect(() => {
-    const storedToken = localStorage.getItem('google_id_token');
-    if (storedToken) {
-      setToken(storedToken);
-      try {
-        const decoded: any = jwtDecode(storedToken);
-        setProfile({ name: decoded.name, picture: decoded.picture });
-      } catch (e) {
-        setProfile(null);
-      }
-    }
+    fetch(`${API_BASE_URL}/auth/profile`, { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.name) setProfile({ name: data.name, picture: data.picture });
+        else setProfile(null);
+      });
   }, []);
 
-  // Add a custom event to sync sign-in state after sign-out/sign-in
-  useEffect(() => {
-    const syncSignIn = (e: any) => {
-      if (e.key === 'google_id_token') {
-        const newToken = localStorage.getItem('google_id_token');
-        setToken(newToken);
-        if (newToken) {
-          try {
-            const decoded: any = jwtDecode(newToken);
-            setProfile({ name: decoded.name, picture: decoded.picture });
-          } catch (e) {
-            setProfile(null);
-          }
-        } else {
-          setProfile(null);
-        }
-      }
-    };
-    window.addEventListener('storage', syncSignIn);
-    return () => window.removeEventListener('storage', syncSignIn);
-  }, []);
-
-  const handleSignIn = (idToken: string) => {
-    setToken(idToken);
-    localStorage.setItem('google_id_token', idToken);
-    try {
-      const decoded: any = jwtDecode(idToken);
-      setProfile({ name: decoded.name, picture: decoded.picture });
-    } catch (e) {
+  const handleSignIn = async (idToken: string) => {
+    // Send idToken to backend
+    const res = await fetch(`${API_BASE_URL}/auth/google`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ idToken }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setProfile({ name: data.name, picture: data.picture });
+    } else {
       setProfile(null);
     }
-    // Trigger storage event for other tabs/components
-    window.dispatchEvent(new StorageEvent('storage', { key: 'google_id_token' }));
   };
 
-  const handleSignOut = () => {
-    setToken(null);
+  const handleSignOut = async () => {
+    // Clear cookie by setting session to empty (implement /auth/signout on backend for real signout)
+    document.cookie = 'session=; Max-Age=0; path=/;';
     setProfile(null);
-    localStorage.removeItem('google_id_token');
-    // Trigger storage event for other tabs/components
-    window.dispatchEvent(new StorageEvent('storage', { key: 'google_id_token' }));
   };
 
   return (
@@ -73,14 +49,14 @@ const Navbar = () => {
         <li><Link href="#chatbot">Chatbot</Link></li>
       </ul>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {!token ? (
+        {!profile ? (
           <GoogleSignIn onSignIn={handleSignIn} />
         ) : (
           <>
-            {profile && profile.picture && (
+            {profile.picture && (
               <img src={profile.picture} alt="Profile" style={{ width: 32, height: 32, borderRadius: '50%' }} />
             )}
-            <span>{profile?.name}</span>
+            <span>{profile.name}</span>
             <button onClick={handleSignOut} style={{ marginLeft: 8 }}>Sign Out</button>
           </>
         )}

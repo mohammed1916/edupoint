@@ -1,8 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi import Response, Cookie
+from auth_utils import verify_google_id_token
 import os
 import requests
+import json
 
 GEMINI_API_URL = os.environ.get("GEMINI_API_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
@@ -12,10 +15,13 @@ OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "gemma3n-e4b-q4")
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],  # your frontend origin
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+SESSION_COOKIE_NAME = "session"
 
 # Gemini API endpoint
 @app.post("/api/gemini")
@@ -146,3 +152,27 @@ async def get_attractions(location: str):
         return JSONResponse(content=resp.json())
     except Exception as e:
         return {"error": str(e)}
+
+# Authentication endpoints
+
+@app.post("/auth/google")
+async def google_auth(request: Request, response: Response):
+    data = await request.json()
+    id_token = data.get("idToken")
+    if not id_token:
+        return JSONResponse(status_code=400, content={"error": "Missing idToken"})
+    user_info = verify_google_id_token(id_token)
+    # Store minimal info in cookie (for demo; use JWT or session store for production)
+    cookie_value = json.dumps({"name": user_info.get("name"), "picture": user_info.get("picture")})
+    response.set_cookie(key=SESSION_COOKIE_NAME, value=cookie_value, httponly=True, samesite="lax")
+    return {"name": user_info.get("name"), "picture": user_info.get("picture")}
+
+@app.get("/auth/profile")
+async def get_profile(session: str = Cookie(default=None, alias=SESSION_COOKIE_NAME)):
+    if not session:
+        return JSONResponse(status_code=401, content={"error": "Not authenticated"})
+    try:
+        profile = json.loads(session)
+        return profile
+    except Exception:
+        return JSONResponse(status_code=400, content={"error": "Invalid session"})
