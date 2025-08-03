@@ -95,9 +95,13 @@ for frame in frames:
 
 ### Model Parameters
 
-- **Model**: `unsloth/gemma-3n-E4B` (4-bit quantized for memory efficiency)
+- **Primary Models**: 
+  - `unsloth/llava-v1.6-mistral-7b-hf-bnb-4bit` (Recommended for vision tasks)
+  - `unsloth/llava-1.5-7b-hf-bnb-4bit` (Alternative LLaVA model)
+  - `unsloth/gemma-3n-E4B` (Fallback option)
 - **Device**: CUDA GPU
 - **Quantization**: 4-bit for reduced memory usage
+- **Auto-selection**: Script automatically tries models in order of preference
 
 ### Video Processing Parameters
 
@@ -150,6 +154,31 @@ The project includes several memory optimization features:
 - **Frame Resizing**: Automatically resizes large frames
 - **GPU Cache Clearing**: Clears CUDA cache after processing
 - **Temporary File Cleanup**: Removes downloaded videos after analysis
+
+## Fine-tuning Options
+
+If you're getting poor results with the pre-trained models, you can fine-tune them for your specific use case:
+
+### Why Fine-tune?
+- **Better Performance**: Models trained specifically for your domain
+- **Custom Prompts**: Optimize for your specific analysis tasks
+- **Improved Accuracy**: Better understanding of your video content
+
+### Fine-tuning Process
+1. **Prepare Dataset**: Create a dataset of video frames with descriptions
+2. **Choose Base Model**: Start with LLaVA or Gemma3 as base
+3. **Training**: Use the existing `Gemma3N_(4B)-Vision.ipynb` as reference
+4. **Evaluation**: Test on your specific video types
+
+### Quick Fine-tuning Example
+```python
+# Use the existing notebook for fine-tuning
+# The notebook already includes:
+# - Data preparation
+# - Model setup with LoRA
+# - Training configuration
+# - Inference testing
+```
 
 ## Troubleshooting
 
