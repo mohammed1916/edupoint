@@ -1,0 +1,9 @@
+# Dependencies for Ollama-based video inference
+opencv-python>=4.8.0
+yt-dlp>=2023.12.0
+Pillow>=10.0.0
+numpy>=1.24.0
+requests>=2.31.0
+
+# Optional: For better performance and visualization
+matplotlib>=3.7.0 
