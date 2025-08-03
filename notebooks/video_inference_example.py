@@ -4,12 +4,24 @@ Simple example script for video inference with Gemma3
 This script demonstrates how to analyze videos using the Gemma3 vision model.
 """
 
+import os
+import sys
+
+# Fix for Windows C compiler issues
+if os.name == 'nt':  # Windows
+    # Disable dynamic compilation to avoid C compiler issues
+    os.environ['TORCHDYNAMO_DISABLE'] = '1'
+    os.environ['TORCH_COMPILE_DISABLE'] = '1'
+    
+    # Set environment variables to avoid compiler issues
+    os.environ['CC'] = 'cl.exe' if os.path.exists('C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe') else ''
+    os.environ['CXX'] = 'cl.exe' if os.path.exists('C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.29.30133/bin/Hostx64/x64/cl.exe') else ''
+
 import torch
 from unsloth import FastVisionModel, get_chat_template
 import cv2
 import yt_dlp
 import requests
-import os
 from PIL import Image
 import numpy as np
 from typing import List, Optional
@@ -22,21 +34,43 @@ def setup_model():
     """Setup and load the Gemma3 vision model"""
     print("Loading Gemma3 vision model...")
     
-    model, processor = FastVisionModel.from_pretrained(
-        "unsloth/gemma-3n-E4B",
-        load_in_4bit=True,
-        use_gradient_checkpointing="unsloth",
-        device_map="cuda"
-    )
-    
-    # Set up chat template
-    processor = get_chat_template(processor, "gemma-3n")
-    
-    # Set to inference mode
-    FastVisionModel.for_inference(model)
-    
-    print("Model loaded successfully!")
-    return model, processor
+    try:
+        model, processor = FastVisionModel.from_pretrained(
+            "unsloth/gemma-3n-E4B",
+            load_in_4bit=True,
+            use_gradient_checkpointing="unsloth",
+            device_map="cuda"
+        )
+        
+        # Set up chat template
+        processor = get_chat_template(processor, "gemma-3n")
+        
+        # Set to inference mode
+        FastVisionModel.for_inference(model)
+        
+        print("Model loaded successfully!")
+        return model, processor
+        
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        print("Trying alternative loading method...")
+        
+        # Alternative loading method
+        model, processor = FastVisionModel.from_pretrained(
+            "unsloth/gemma-3n-E4B",
+            load_in_4bit=True,
+            device_map="cuda",
+            torch_dtype=torch.float16
+        )
+        
+        # Set up chat template
+        processor = get_chat_template(processor, "gemma-3n")
+        
+        # Set to inference mode
+        FastVisionModel.for_inference(model)
+        
+        print("Model loaded successfully with alternative method!")
+        return model, processor
 
 def download_video(url: str, output_path: str = None) -> str:
     """Download video from URL"""
@@ -118,17 +152,34 @@ def analyze_frame(model, processor, image: Image.Image, prompt: str) -> str:
             return_tensors="pt"
         ).to("cuda")
         
-        # Generate response
+        # Generate response with error handling
         with torch.no_grad():
-            result = model.generate(
-                **inputs,
-                max_new_tokens=256,
-                use_cache=True,
-                temperature=0.7,
-                top_p=0.95,
-                top_k=64,
-                do_sample=True
-            )
+            try:
+                result = model.generate(
+                    **inputs,
+                    max_new_tokens=256,
+                    use_cache=True,
+                    temperature=0.7,
+                    top_p=0.95,
+                    top_k=64,
+                    do_sample=True
+                )
+            except RuntimeError as e:
+                if "C compiler" in str(e):
+                    print("C compiler error detected, trying alternative generation method...")
+                    # Alternative generation method
+                    result = model.generate(
+                        **inputs,
+                        max_new_tokens=256,
+                        use_cache=False,  # Disable cache to avoid compilation
+                        temperature=0.7,
+                        top_p=0.95,
+                        top_k=64,
+                        do_sample=True,
+                        pad_token_id=processor.tokenizer.eos_token_id
+                    )
+                else:
+                    raise e
         
         # Decode result
         generated_text = processor.tokenizer.decode(result[0], skip_special_tokens=True)

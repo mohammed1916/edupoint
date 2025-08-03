@@ -1,0 +1,30 @@
+# Core dependencies for Gemma3 video inference
+torch>=2.0.0
+transformers>=4.35.0
+unsloth>=2025.7.0
+
+# Video processing
+opencv-python>=4.8.0
+yt-dlp>=2023.12.0
+Pillow>=10.0.0
+
+# Utilities
+numpy>=1.24.0
+requests>=2.31.0
+matplotlib>=3.7.0
+
+# Optional: For better performance
+accelerate>=0.24.0
+xformers>=0.0.22
+bitsandbytes>=0.41.0
+
+# Windows compatibility
+setuptools>=65.0.0
+wheel>=0.38.0
+
+# Development and testing
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+
+# Additional packages for Windows
+ninja>=1.11.0 
