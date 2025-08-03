@@ -1,0 +1,52 @@
+{
+  "builder_name": "parquet",
+  "citation": "\n@misc{shoeiby2019pirm2018,\n  title={PIRM2018 Challenge on Spectral Image Super-Resolution: Dataset and Study}, \n  author={Mehrdad Shoeiby and Antonio Robles-Kelly and Ran Wei and Radu Timofte},\n  year={2019},\n  eprint={1904.00540},\n  archivePrefix={arXiv},\n  primaryClass={cs.CV}\n}\n",
+  "config_name": "bicubic_x2",
+  "dataset_name": "pirm",
+  "dataset_size": 85784,
+  "description": "\nThe PIRM dataset consists of 200 images, which are divided into two equal sets for validation and testing. \nThese images cover diverse contents, including people, objects, environments, flora, natural scenery, etc. \nImages vary in size, and are typically ~300K pixels in resolution.\n\nThis dataset was first used for evaluating the perceptual quality of super-resolution algorithms in The 2018 PIRM \nchallenge on Perceptual Super-resolution, in conjunction with ECCV 2018.\n",
+  "download_checksums": {
+    "hf://datasets/eugenesiow/PIRM@c412b13900d2fc7a9f5cd75ea7a204483c98af08/bicubic_x2/validation/0000.parquet": {
+      "num_bytes": 6947,
+      "checksum": null
+    },
+    "hf://datasets/eugenesiow/PIRM@c412b13900d2fc7a9f5cd75ea7a204483c98af08/bicubic_x2/test/0000.parquet": {
+      "num_bytes": 6997,
+      "checksum": null
+    }
+  },
+  "download_size": 13944,
+  "features": {
+    "hr": {
+      "dtype": "string",
+      "_type": "Value"
+    },
+    "lr": {
+      "dtype": "string",
+      "_type": "Value"
+    }
+  },
+  "homepage": "https://github.com/roimehrez/PIRM2018",
+  "license": "cc-by-nc-sa-4.0",
+  "size_in_bytes": 99728,
+  "splits": {
+    "validation": {
+      "name": "validation",
+      "num_bytes": 42884,
+      "num_examples": 100,
+      "dataset_name": "pirm"
+    },
+    "test": {
+      "name": "test",
+      "num_bytes": 42900,
+      "num_examples": 100,
+      "dataset_name": "pirm"
+    }
+  },
+  "version": {
+    "version_str": "1.0.0",
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  }
+}
