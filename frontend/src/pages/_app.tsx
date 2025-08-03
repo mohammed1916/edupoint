@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import store from '../redux/store';
 import React, { useState } from 'react';
 import ConsentBanner from '../components/ConsentBanner';
-import { app, getAnalytics } from '../services/firebase';
+import { app } from '../firebaseConfig';
+import { getAnalytics } from "firebase/analytics";
 import FirebaseNavbar from '../components/FirebaseNavbar';
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-// Replace with your actual config
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID",
-};
-const app = initializeApp(firebaseConfig);
+import { app } from "../firebaseConfig";
+
 const auth = getAuth(app);
 
 const GoogleCalendarFirebase = () => {

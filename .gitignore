@@ -37,3 +37,4 @@ notebooks/unsloth_compiled_cache
 notebooks/local_fip256_dataset
 *.arrow
 *.mp4
+*.png

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import GoogleSignIn from './GoogleSignIn';
 import { jwtDecode } from "jwt-decode";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
@@ -73,7 +72,7 @@ const GoogleCalendar = () => {
         </div>
       )} */}
       {!token ? (
-        <GoogleSignIn onSignIn={handleSignIn} />
+        <button onClick={() => alert('Use Firebase sign-in from navbar')}>Sign in with Google</button>
       ) : (
         <div>
           <p>Signed in! (You need to exchange ID token for access token to fetch events)</p>
