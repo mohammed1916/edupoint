@@ -39,16 +39,16 @@ const GoogleCalendar = () => {
 
   return (
     <div style={{marginTop: '2rem'}}>
-      <h2>Google Calendar Integration</h2>
+      <h2>Calendar</h2>
       {/* Show profile in navbar or here for demo */}
-      {profile && (
+      {/* {profile && (
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           {profile.picture && (
             <img src={profile.picture} alt="Profile" style={{ width: 32, height: 32, borderRadius: '50%', marginRight: 8 }} />
           )}
           <span>{profile.name}</span>
         </div>
-      )}
+      )} */}
       {!token ? (
         <GoogleSignIn onSignIn={handleSignIn} />
       ) : (
