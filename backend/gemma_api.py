@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi import Response, Cookie
+from fastapi import Response, Cookie, status
 from auth_utils import verify_google_id_token
 import os
 import requests
@@ -176,3 +176,8 @@ async def get_profile(session: str = Cookie(default=None, alias=SESSION_COOKIE_N
         return profile
     except Exception:
         return JSONResponse(status_code=400, content={"error": "Invalid session"})
+
+@app.post("/auth/signout")
+async def signout(response: Response):
+    response.delete_cookie(key=SESSION_COOKIE_NAME)
+    return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Signed out"})

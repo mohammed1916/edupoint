@@ -7,6 +7,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8
 
 const Navbar = () => {
   const [profile, setProfile] = useState<{ name?: string; picture?: string } | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   // On mount, fetch profile from backend
   useEffect(() => {
@@ -16,6 +17,7 @@ const Navbar = () => {
         if (data && data.name) setProfile({ name: data.name, picture: data.picture });
         else setProfile(null);
       });
+    console.log('Navbar mounted, fetching profile...', profile);
   }, []);
 
   const handleSignIn = async (idToken: string) => {
@@ -35,9 +37,18 @@ const Navbar = () => {
   };
 
   const handleSignOut = async () => {
-    // Clear cookie by setting session to empty (implement /auth/signout on backend for real signout)
-    document.cookie = 'session=; Max-Age=0; path=/;';
+    const res = await fetch(`${API_BASE_URL}/auth/signout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      console.log('Signed out:', data);
+      if (data.message) setToast(data.message);
+    }
+
     setProfile(null);
+    setTimeout(() => setToast(null), 3000);
   };
 
   return (
@@ -61,6 +72,9 @@ const Navbar = () => {
           </>
         )}
       </div>
+      {toast && (
+        <div className={styles.toast}>{toast}</div>
+      )}
     </nav>
   );
 };
