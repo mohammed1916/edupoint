@@ -39,3 +39,4 @@ notebooks/local_fip256_dataset
 *.mp4
 *.png
 *.wav
+*.json
