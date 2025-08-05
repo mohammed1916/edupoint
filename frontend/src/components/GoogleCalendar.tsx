@@ -9,13 +9,14 @@ const GoogleCalendar: React.FC = () => {
 
   useEffect(() => {
     if (accessToken) {
-      console.log('[GoogleCalendar] accessToken after refresh:', accessToken);
+      const today = new Date();
+      const timeMin = today.toISOString();
       fetch('/api/google/calendar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ accessToken }),
+        body: JSON.stringify({ accessToken, timeMin }),
       })
         .then(res => res.json())
         .then(data => setEvents(data.items || []));
@@ -45,15 +46,30 @@ const GoogleCalendar: React.FC = () => {
         </div>
       )}
       <div>
-        <ul>
-          {events.length > 0 ? (
-            events.map((event) => (
-              <li key={event.id}>{event.summary}</li>
-            ))
-          ) : (
-            <li>No events found.</li>
-          )}
-        </ul>
+        {events.length > 0 ? (
+          <table className={styles.eventsTable}>
+            <thead>
+              <tr>
+                <th>Summary</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((event) => (
+                <tr key={event.id}>
+                  <td>{event.summary}</td>
+                  <td>{event.start?.dateTime || event.start?.date || '-'}</td>
+                  <td>{event.end?.dateTime || event.end?.date || '-'}</td>
+                  <td>{event.location || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No events found.</p>
+        )}
       </div>
     </div>
   );
