@@ -24,7 +24,7 @@ app.add_middleware(
 )
 
 SESSION_COOKIE_NAME = "session"
-cred = credentials.Certificate("edupoint-b1bf5-firebase-adminsdk-fbsvc-dd0d928d18.json")
+cred = credentials.Certificate("edupoint-b1bf5-b530d165b8dd.json")
 firebase_admin.initialize_app(cred)
 SESSION_EXPIRE_SECONDS = 60 * 60 * 24 * 5  # 5 days
 
