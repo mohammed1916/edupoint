@@ -164,10 +164,13 @@ async def get_attractions(location: str):
 async def google_auth(request: Request, response: Response):
     data = await request.json()
     id_token = data.get("idToken")
+    print(f"[BACKEND] /auth/google called. idToken received: {bool(id_token)}")
     if not id_token:
+        print("[BACKEND] /auth/google error: Missing idToken")
         return JSONResponse(status_code=400, content={"error": "Missing idToken"})
     try:
         decoded_token = auth.verify_id_token(id_token)
+        print(f"[BACKEND] /auth/google: User signed in: {decoded_token.get('email')}")
         session_cookie = auth.create_session_cookie(id_token, expires_in=SESSION_EXPIRE_SECONDS)
         response.set_cookie(
             key=SESSION_COOKIE_NAME,
@@ -179,19 +182,25 @@ async def google_auth(request: Request, response: Response):
         )
         return {"name": decoded_token.get("name"), "picture": decoded_token.get("picture")}
     except Exception as e:
+        print(f"[BACKEND] /auth/google error: {str(e)}")
         return JSONResponse(status_code=401, content={"error": str(e)})
 
 @app.get("/auth/profile")
 async def get_profile(session: str = Cookie(default=None, alias=SESSION_COOKIE_NAME)):
+    print(f"[BACKEND] /auth/profile called. Session cookie present: {bool(session)}")
     if not session:
+        print("[BACKEND] /auth/profile error: Not authenticated")
         return JSONResponse(status_code=401, content={"error": "Not authenticated"})
     try:
         decoded_claims = auth.verify_session_cookie(session, check_revoked=True)
+        print(f"[BACKEND] /auth/profile: User profile accessed: {decoded_claims.get('email')}")
         return {"name": decoded_claims.get("name"), "picture": decoded_claims.get("picture")}
-    except Exception:
+    except Exception as e:
+        print(f"[BACKEND] /auth/profile error: {str(e)}")
         return JSONResponse(status_code=400, content={"error": "Invalid session"})
 
 @app.post("/auth/signout")
 async def signout(response: Response):
+    print("[BACKEND] /auth/signout called. User signed out.")
     response.delete_cookie(key=SESSION_COOKIE_NAME, path="/", samesite="lax")
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Signed out"})

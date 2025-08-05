@@ -18,6 +18,7 @@ const GoogleSignIn = ({ onSignIn }: { onSignIn: (token: string) => void }) => {
       window.google.accounts.id.initialize({
         client_id: CLIENT_ID,
         callback: (response: any) => {
+          console.log('[FRONTEND] Google sign-in callback received. Credential:', response.credential);
           onSignIn(response.credential);
         },
       });

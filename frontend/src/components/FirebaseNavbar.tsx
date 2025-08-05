@@ -2,41 +2,22 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
 import { app } from "../firebaseConfig";
+import { useAuth } from '../context/AuthContext';
 
 const auth = getAuth(app);
 
-const FirebaseNavbar = ({ setAccessToken }: { setAccessToken: (token: string | null) => void }) => {
-  const [profile, setProfile] = useState<{ name?: string; picture?: string } | null>(null);
+const FirebaseNavbar = () => {
+  const { profile, signIn, signOutUser } = useAuth();
   const [toast, setToast] = useState<string | null>(null);
 
   const handleSignIn = async () => {
-    const provider = new GoogleAuthProvider();
-    provider.addScope("https://www.googleapis.com/auth/calendar.readonly");
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential?.accessToken;
-      setAccessToken(token || null);
-      // Get profile info
-      const user = result.user;
-      setProfile({ name: user.displayName || "", picture: user.photoURL || "" });
-      setToast("Signed in!");
-      setTimeout(() => setToast(null), 3000);
-    } catch (error: any) {
-      if (error.code === 'auth/popup-closed-by-user') {
-        setToast("Sign-in cancelled. Please try again and complete the sign-in.");
-        setTimeout(() => setToast(null), 4000);
-      } else {
-        setToast("Sign-in failed: " + (error.message || "Unknown error"));
-        setTimeout(() => setToast(null), 4000);
-      }
-    }
+    await signIn();
+    setToast("Signed in!");
+    setTimeout(() => setToast(null), 3000);
   };
 
   const handleSignOut = async () => {
-    await signOut(auth);
-    setAccessToken(null);
-    setProfile(null);
+    await signOutUser();
     setToast("Signed out!");
     setTimeout(() => setToast(null), 3000);
   };
