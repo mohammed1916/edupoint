@@ -6,6 +6,8 @@ from auth_utils import verify_google_id_token
 import os
 import requests
 import json
+import firebase_admin
+from firebase_admin import credentials, auth
 
 GEMINI_API_URL = os.environ.get("GEMINI_API_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
@@ -22,6 +24,9 @@ app.add_middleware(
 )
 
 SESSION_COOKIE_NAME = "session"
+cred = credentials.Certificate("edupoint-b1bf5-firebase-adminsdk-fbsvc-dd0d928d18.json")
+firebase_admin.initialize_app(cred)
+SESSION_EXPIRE_SECONDS = 60 * 60 * 24 * 5  # 5 days
 
 # Gemini API endpoint
 @app.post("/api/gemini")
@@ -161,19 +166,28 @@ async def google_auth(request: Request, response: Response):
     id_token = data.get("idToken")
     if not id_token:
         return JSONResponse(status_code=400, content={"error": "Missing idToken"})
-    user_info = verify_google_id_token(id_token)
-    # Store minimal info in cookie (for demo; use JWT or session store for production)
-    cookie_value = json.dumps({"name": user_info.get("name"), "picture": user_info.get("picture")})
-    response.set_cookie(key=SESSION_COOKIE_NAME, value=cookie_value, httponly=True, samesite="lax")
-    return {"name": user_info.get("name"), "picture": user_info.get("picture")}
+    try:
+        decoded_token = auth.verify_id_token(id_token)
+        session_cookie = auth.create_session_cookie(id_token, expires_in=SESSION_EXPIRE_SECONDS)
+        response.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=session_cookie,
+            max_age=SESSION_EXPIRE_SECONDS,
+            httponly=True,
+            secure=True,
+            samesite="lax"
+        )
+        return {"name": decoded_token.get("name"), "picture": decoded_token.get("picture")}
+    except Exception as e:
+        return JSONResponse(status_code=401, content={"error": str(e)})
 
 @app.get("/auth/profile")
 async def get_profile(session: str = Cookie(default=None, alias=SESSION_COOKIE_NAME)):
     if not session:
         return JSONResponse(status_code=401, content={"error": "Not authenticated"})
     try:
-        profile = json.loads(session)
-        return profile
+        decoded_claims = auth.verify_session_cookie(session, check_revoked=True)
+        return {"name": decoded_claims.get("name"), "picture": decoded_claims.get("picture")}
     except Exception:
         return JSONResponse(status_code=400, content={"error": "Invalid session"})
 
