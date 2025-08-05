@@ -5,7 +5,7 @@ import FirebaseNavbar from '../src/components/FirebaseNavbar';
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
-      <FirebaseNavbar setAccessToken={() => {}} />
+      <FirebaseNavbar />
       <Component {...pageProps} />
     </AuthProvider>
   );
