@@ -41,7 +41,7 @@ const FirebaseNavbar = () => {
             {profile?.picture && (
               <img src={profile.picture} alt="Profile" className={styles.profileImg} />
             )}
-            <span>{profile?.name}</span>
+            <span className={styles.profileName}>{profile?.name}</span>
             <button className={styles.fancyBtn} onClick={handleSignOut}>Sign Out</button>
           </>
         )}

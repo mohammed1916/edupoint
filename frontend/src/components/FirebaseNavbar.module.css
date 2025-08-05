@@ -1,89 +1,100 @@
 .navbar {
-  background: linear-gradient(270deg, #000, #1e3c72, #2a5298, #e52e71, #ff8a00, #1e3c72, #000);
-  background-size: 1200% 1200%;
-  animation: gradientFlow 18s ease infinite;
-  box-shadow: 0 4px 16px rgba(30,60,114,0.15);
-  border-radius: 0 0 18px 18px;
-  padding: 1rem 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    background: linear-gradient(270deg,  #115140, #0c8d6e, #115140);
+    background-size: 1200% 1200%;
+    animation: gradientFlow 60s ease infinite;
+    box-shadow: 0 4px 16px rgba(30,60,114,0.15);
+    border-radius: 0 0 18px 18px;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 @keyframes gradientFlow {
-  0% {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100% {background-position:0% 50%}
+    0% {background-position:0% 50%}
+    50% {background-position:100% 50%}
+    100% {background-position:0% 50%}
 }
 
 .navList {
-  display: flex;
-  gap: 2rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .navList li a {
-  color: #fff;
-  font-weight: 500;
-  text-decoration: none;
-  font-size: 1.1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+    color: #fff;
+    font-weight: 500;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
 }
 
 .navList li a:hover {
-  background: rgba(255,255,255,0.15);
-  box-shadow: 0 2px 8px rgba(42,82,152,0.18);
-  transform: scale(1.08);
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 2px 8px rgba(42,82,152,0.18);
+    transform: scale(1.08);
 }
 
 .profileArea {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .profileImg {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(30,60,114,0.18);
-  border: 2px solid #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(30,60,114,0.18);
+    border: 2px solid #fff;
+}
+
+.profileImg:hover {
+    box-shadow: 0 4px 16px rgba(30,60,114,0.28);
+    transform: scale(1.05);
+}
+
+.profileName {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
 }
 
 .fancyBtn {
-  background: linear-gradient(90deg, #ff8a00 0%, #e52e71 100%);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 0.6rem 1.4rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(229,46,113,0.18);
-  transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-  outline: none;
+    background: linear-gradient(90deg, #1f715b 0%, #07b48b 100%);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 0.6rem 1.4rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(229,46,113,0.18);
+    transition: background 2s ease, box-shadow 0.3s, transform 0.4s;
+    outline: none;
 }
 
 .fancyBtn:hover {
-  background: linear-gradient(90deg, #e52e71 0%, #ff8a00 100%);
-  box-shadow: 0 4px 16px rgba(229,46,113,0.28);
-  transform: scale(1.07) rotate(-2deg);
+    background: linear-gradient(90deg, #07b48b 0%, #1f715b 100%);
+    box-shadow: 0 4px 16px rgba(229,46,113,0.28);
+    transform: scale(1.07) rotate(-2deg);
 }
 
 .toast {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-  color: #fff;
-  padding: 10px 22px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(30,60,114,0.18);
-  font-weight: 500;
-  z-index: 1000;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(30,60,114,0.18);
+    font-weight: 500;
+    z-index: 1000;
 }

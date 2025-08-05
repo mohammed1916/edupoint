@@ -7,6 +7,7 @@ import { app } from '../firebaseConfig';
 import { getAnalytics } from "firebase/analytics";
 import FirebaseNavbar from '../components/FirebaseNavbar';
 import { AuthProvider } from '../context/AuthContext';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [analyticsEnabled, setAnalyticsEnabled] = React.useState(false);
@@ -19,13 +20,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <FirebaseNavbar />
-        <Component {...pageProps} />
-        {!analyticsEnabled && <ConsentBanner onAccept={handleConsent} />}
-      </AuthProvider>
-    </Provider>
+    <>
+      <Head>
+        <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&display=swap" rel="stylesheet" />
+      </Head>
+      <Provider store={store}>
+        <AuthProvider>
+          <FirebaseNavbar />
+          <Component {...pageProps} />
+          {!analyticsEnabled && <ConsentBanner onAccept={handleConsent} />}
+        </AuthProvider>
+      </Provider>
+    </>
   );
 }
 
