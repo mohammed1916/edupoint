@@ -1,5 +1,5 @@
 import React from 'react';
-import GoogleCalendar from '../components/GoogleCalendar';
+import GoogleCalendar from '../../src/components/GoogleCalendar';
 
 const CalendarPage = () => {
   return <GoogleCalendar />;

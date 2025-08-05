@@ -1,4 +1,6 @@
+"use client";
 import React, { useEffect, useState } from 'react';
+import styles from './GoogleSignIn.module.css';
 
 const CLIENT_ID = '523580660855-0bj51varng67boign9vs26n7v5m08rks.apps.googleusercontent.com';
 
@@ -29,7 +31,7 @@ const GoogleSignIn = ({ onSignIn }: { onSignIn: (token: string) => void }) => {
     }
   }, [gapiLoaded, onSignIn]);
 
-  return <div id="google-signin-btn" style={{ margin: '1rem 0' }} />;
+  return <div id="google-signin-btn" className={styles.googleSignInBtn} />;
 };
 
 export default GoogleSignIn;

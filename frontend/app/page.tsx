@@ -1,8 +1,8 @@
 import React from 'react';
-import FirebaseNavbar from '../components/FirebaseNavbar';
-import GoogleCalendar from '../components/GoogleCalendar';
-import Chatbot from '../components/Chatbot';
-import styles from '../styles/homepage.module.css';
+import FirebaseNavbar from '../src/components/FirebaseNavbar';
+import GoogleCalendar from '../src/components/GoogleCalendar';
+import Chatbot from '../src/components/Chatbot';
+import styles from '../src/styles/homepage.module.css';
 
 const Homepage = () => {
   return (

@@ -7,14 +7,13 @@ const GoogleCalendarFirebase = () => {
 
   const fetchEvents = async () => {
     if (!accessToken) return;
-    const res = await fetch(
-      "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
+    const res = await fetch('/api/google/calendar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accessToken }),
+    });
     const data = await res.json();
     setEvents(data.items || []);
   };

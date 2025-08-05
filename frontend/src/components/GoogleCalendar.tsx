@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import styles from './GoogleCalendar.module.css';
@@ -9,8 +10,12 @@ const GoogleCalendar: React.FC = () => {
   useEffect(() => {
     if (accessToken) {
       console.log('[GoogleCalendar] accessToken after refresh:', accessToken);
-      fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
-        headers: { Authorization: `Bearer ${accessToken}` },
+      fetch('/api/google/calendar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken }),
       })
         .then(res => res.json())
         .then(data => setEvents(data.items || []));
