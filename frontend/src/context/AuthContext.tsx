@@ -24,7 +24,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Restore session/profile and accessToken on refresh
   useEffect(() => {
-    // Restore accessToken from localStorage
     console.log('[AuthProvider]');
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
@@ -32,8 +31,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('[AuthProvider] Restored accessToken from localStorage:', storedToken);
     }
     fetch(`${API_BASE_URL}/auth/profile`, { credentials: 'include' })
-      .then(res => res.ok ? res.json() : null)
+      .then(res => {
+        if (res.ok) return res.json();
+        // If not authenticated, sign out at backend and clear profile
+        console.log('[AuthProvider] Not authenticated, signing out at backend');
+        fetch(`${API_BASE_URL}/auth/signout`, { method: 'POST', credentials: 'include' });
+        setProfile(null);
+        setAccessToken(null);
+        localStorage.removeItem('accessToken');
+        return null;
+      })
       .then(data => {
+        console.log('DATA:', data);
         if (data && data.name) setProfile({ name: data.name, picture: data.picture });
         setLoading(false);
       })
@@ -73,7 +82,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProfile(null);
     localStorage.removeItem('accessToken');
     // Optionally call backend signout endpoint
-    fetch(`${API_BASE_URL}/auth/signout`, { method: 'POST', credentials: 'include' });
+    fetch(`${API_BASE_URL}/auth/signout`, { method: 'POST', credentials: 'include' }).then(() => {
+      console.log('[AuthProvider] Signed out from backend');
+    });
+    setLoading(false);
+    console.log('[AuthProvider] Signed out');
   };
 
   return (
