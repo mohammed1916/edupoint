@@ -11,6 +11,11 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import logging
 import re
+from langchain.agents import initialize_agent, Tool
+from langchain_community.llms import OpenAI
+from langchain_ollama.llms import OllamaLLM
+from langchain.agents import AgentType
+import datetime
 
 load_dotenv()
 
@@ -132,12 +137,23 @@ async def ollama_infer(request: Request):
     logger.debug(f"RAG_TEXTS length: {len(RAG_TEXTS) if RAG_TEXTS else 0}")
     # --- RAG: retrieve relevant context ---
     rag_context = retrieve_context(prompt, k=len(RAG_TEXTS) if RAG_TEXTS else 5)
+    logger.debug(f"RAG context retrieved: {rag_context[:100]}... (length: {len(rag_context)})")
     if rag_context:
         logger.info("RAG context found for prompt. Including in Ollama request.")
         prompt = f"Relevant info:\n{rag_context}\n\nUser: {prompt}"
     else:
         logger.info("No RAG context found for prompt.")
     logger.debug(f"Final prompt sent to Ollama: {prompt}")
+    
+    # --- LangChain agent tool-use ---
+    try:
+        agent_result = agent.run(prompt)
+        return {"result": agent_result}
+    except Exception as e:
+        logger.error(f"LangChain agent error: {str(e)}")
+        # fallback to Ollama if agent fails
+        pass
+    
     payload = {
         "model": OLLAMA_MODEL,
         "prompt": prompt,
@@ -292,3 +308,22 @@ async def signout(request: Request, response: Response):
             print(f"Session revocation failed: {e}")
     response.delete_cookie(key=SESSION_COOKIE_NAME, path="/", samesite="strict")
     return JSONResponse(status_code=status.HTTP_200_OK, content={"message": "Signed out"})
+
+
+
+def get_current_date(_=None):
+    """Returns today's date as a string."""
+    return str(datetime.date.today())
+
+# Register tools for the agent
+tools = [
+    Tool(
+        name="get_current_date",
+        func=get_current_date,
+        description="Returns today's date as a string."
+    ),
+]
+
+# Initialize LangChain agent (Gemma3/Ollama LLM)
+llm = OllamaLLM(model="gemma3")
+agent = initialize_agent(tools, llm, agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
