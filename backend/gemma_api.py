@@ -10,6 +10,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import logging
+import re
 
 load_dotenv()
 
@@ -130,7 +131,7 @@ async def ollama_infer(request: Request):
     logger.debug(f"Prompt before RAG: {prompt}")
     logger.debug(f"RAG_TEXTS length: {len(RAG_TEXTS) if RAG_TEXTS else 0}")
     # --- RAG: retrieve relevant context ---
-    rag_context = retrieve_context(prompt, k=5)
+    rag_context = retrieve_context(prompt, k=len(RAG_TEXTS) if RAG_TEXTS else 5)
     if rag_context:
         logger.info("RAG context found for prompt. Including in Ollama request.")
         prompt = f"Relevant info:\n{rag_context}\n\nUser: {prompt}"
