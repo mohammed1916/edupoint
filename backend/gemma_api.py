@@ -183,7 +183,7 @@ async def google_auth(request: Request, response: Response):
             max_age=SESSION_EXPIRE_SECONDS,
             httponly=True,
             secure=SECURE_COOKIE,
-            samesite="strict"
+            samesite="lax" if DEV_MODE else "strict"
         )
         return {"name": decoded_token.get("name"), "picture": decoded_token.get("picture")}
     except Exception as e:
