@@ -30,7 +30,7 @@ firebase_admin.initialize_app(cred)
 GEMINI_API_URL = os.getenv("GEMINI_API_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3n-e4b-q4")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma3")
 
 
 @app.get("/health")
@@ -72,7 +72,10 @@ async def ollama_infer(request: Request):
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.post(OLLAMA_URL, json=payload)
-            return {"result": resp.json()["response"]}
+            ollama_json = resp.json()
+            # Try common keys, fallback to full response
+            result = ollama_json.get("response") or ollama_json.get("result") or str(ollama_json)
+            return {"result": result}
     except Exception as e:
         return {"result": f"Ollama error: {str(e)}"}
 
@@ -183,7 +186,7 @@ async def google_auth(request: Request, response: Response):
             max_age=SESSION_EXPIRE_SECONDS,
             httponly=True,
             secure=SECURE_COOKIE,
-            samesite="strict"
+            samesite="lax" if DEV_MODE else "strict"
         )
         return {"name": decoded_token.get("name"), "picture": decoded_token.get("picture")}
     except Exception as e:

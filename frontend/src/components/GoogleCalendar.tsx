@@ -6,11 +6,26 @@ import styles from './GoogleCalendar.module.css';
 const GoogleCalendar: React.FC = () => {
   const { accessToken, profile, loading } = useAuth();
   const [events, setEvents] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [taskLists, setTaskLists] = useState<any[]>([]);
+  const [selectedTaskListId, setSelectedTaskListId] = useState<string>('@default');
 
   useEffect(() => {
     if (accessToken) {
-      console.log('[GoogleCalendar] accessToken after refresh:', accessToken);
+      const today = new Date();
+      const timeMin = today.toISOString();
       fetch('/api/google/calendar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken, timeMin }),
+      })
+        .then(res => res.json())
+        .then(data => setEvents(data.items || []));
+
+      // Fetch Google Task Lists
+      fetch('/api/google/tasklists', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -18,11 +33,25 @@ const GoogleCalendar: React.FC = () => {
         body: JSON.stringify({ accessToken }),
       })
         .then(res => res.json())
-        .then(data => setEvents(data.items || []));
+        .then(data => setTaskLists(data.items || []));
     } else {
       console.log('[GoogleCalendar] No accessToken after refresh');
     }
   }, [accessToken]);
+
+  useEffect(() => {
+    if (accessToken && selectedTaskListId) {
+      fetch('/api/google/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken, taskListId: selectedTaskListId }),
+      })
+        .then(res => res.json())
+        .then(data => setTasks(data.items || []));
+    }
+  }, [accessToken, selectedTaskListId]);
 
   if (loading) return <p>Loading...</p>;
   if (!accessToken) return <p>Please sign in with Google to view your calendar.</p>;
@@ -45,15 +74,71 @@ const GoogleCalendar: React.FC = () => {
         </div>
       )}
       <div>
-        <ul>
-          {events.length > 0 ? (
-            events.map((event) => (
-              <li key={event.id}>{event.summary}</li>
-            ))
-          ) : (
-            <li>No events found.</li>
-          )}
-        </ul>
+        {events.length > 0 ? (
+          <table className={styles.eventsTable}>
+            <thead>
+              <tr>
+                <th>Summary</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Location</th>
+              </tr>
+            </thead>
+            <tbody>
+              {events.map((event) => (
+                <tr key={event.id}>
+                  <td>{event.summary}</td>
+                  <td>{event.start?.dateTime || event.start?.date || '-'}</td>
+                  <td>{event.end?.dateTime || event.end?.date || '-'}</td>
+                  <td>{event.location || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No events found.</p>
+        )}
+      </div>
+      <div>
+        <h3>Google Task Lists</h3>
+        {taskLists.length > 0 ? (
+          <select
+            value={selectedTaskListId}
+            onChange={e => setSelectedTaskListId(e.target.value)}
+            className={styles.taskListSelect}
+          >
+            {taskLists.map(list => (
+              <option key={list.id} value={list.id}>{list.title}</option>
+            ))}
+          </select>
+        ) : (
+          <p>No task lists found.</p>
+        )}
+      </div>
+      <div>
+        <h3>Google Tasks</h3>
+        {tasks.length > 0 ? (
+          <table className={styles.tasksTable}>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Due</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map((task) => (
+                <tr key={task.id}>
+                  <td>{task.title}</td>
+                  <td>{task.status}</td>
+                  <td>{task.due || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No tasks found.</p>
+        )}
       </div>
     </div>
   );

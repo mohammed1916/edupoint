@@ -30,8 +30,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAccessToken(storedToken);
       console.log('[AuthProvider] Restored accessToken from localStorage:', storedToken);
     }
-    fetch(`${API_BASE_URL}/auth/profile`, { credentials: 'include' })
+    fetch(`${API_BASE_URL}/auth/profile`, {
+      credentials: 'include'
+    })
       .then(res => {
+        console.log('[AuthProvider] Fetched profile from backend:', res.status);
         if (res.ok) return res.json();
         // If not authenticated, sign out at backend and clear profile
         console.log('[AuthProvider] Not authenticated, signing out at backend');
@@ -42,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return null;
       })
       .then(data => {
-        console.log('DATA:', data);
+        // console.log('DATA:', data);
         if (data && data.name) setProfile({ name: data.name, picture: data.picture });
         setLoading(false);
       })
@@ -53,6 +56,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     provider.addScope("https://www.googleapis.com/auth/calendar.readonly");
+    provider.addScope("https://www.googleapis.com/auth/tasks");
     try {
       const result = await signInWithPopup(auth, provider);
       const credential = GoogleAuthProvider.credentialFromResult(result);
