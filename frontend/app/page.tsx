@@ -1,5 +1,4 @@
 import React from 'react';
-import FirebaseNavbar from '../src/components/FirebaseNavbar';
 import GoogleCalendar from '../src/components/GoogleCalendar';
 import Chatbot from '../src/components/Chatbot';
 import styles from '../src/styles/homepage.module.css';

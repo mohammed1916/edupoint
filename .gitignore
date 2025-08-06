@@ -40,3 +40,4 @@ notebooks/local_fip256_dataset
 *.png
 *.wav
 *.json
+notebooks/lora_model
