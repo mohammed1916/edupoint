@@ -1,0 +1,36 @@
+.ragUploader {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+.ragUploader h4 {
+  margin-bottom: 0.5rem;
+}
+.ragUploader textarea {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;
+}
+.ragUploader button {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.ragUploader button:hover {
+  background: #1565c0;
+}
+.ragUploader .status {
+  margin-top: 8px;
+  color: #1976d2;
+  font-size: 0.95rem;
+}

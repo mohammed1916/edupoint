@@ -22,7 +22,18 @@ const GoogleCalendar: React.FC = () => {
         body: JSON.stringify({ accessToken, timeMin }),
       })
         .then(res => res.json())
-        .then(data => setEvents(data.items || []));
+        .then(data => {
+          setEvents(data.items || []);
+          // Upload events to RAG
+          if (data.items && data.items.length > 0) {
+            const eventTexts = data.items.map(e => `Event: ${e.summary || ''} | Start: ${e.start?.dateTime || e.start?.date || '-'} | End: ${e.end?.dateTime || e.end?.date || '-'} | Location: ${e.location || '-'}`);
+            fetch('http://localhost:8000/api/rag/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ texts: eventTexts })
+            });
+          }
+        });
 
       // Fetch Google Task Lists
       fetch('/api/google/tasklists', {
@@ -49,7 +60,18 @@ const GoogleCalendar: React.FC = () => {
         body: JSON.stringify({ accessToken, taskListId: selectedTaskListId }),
       })
         .then(res => res.json())
-        .then(data => setTasks(data.items || []));
+        .then(data => {
+          setTasks(data.items || []);
+          // Upload tasks to RAG
+          if (data.items && data.items.length > 0) {
+            const taskTexts = data.items.map(t => `Task: ${t.title || ''} | Status: ${t.status || '-'} | Due: ${t.due || '-'}`);
+            fetch('http://localhost:8000/api/rag/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ texts: taskTexts })
+            });
+          }
+        });
     }
   }, [accessToken, selectedTaskListId]);
 
