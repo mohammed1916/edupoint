@@ -1,5 +1,8 @@
 {
   "projects": {
-    "default": "edupoint-b1bf5"
-  }
+    "default": "edupoint-b1bf5",
+    "prod": "edupoint-b1bf5"
+  },
+  "targets": {},
+  "etags": {}
 }
