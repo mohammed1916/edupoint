@@ -328,5 +328,5 @@ tools = [
 ]
 
 # Initialize LangChain agent (Gemma3/Ollama LLM)
-llm = OllamaLLM(model="gemma3")
+llm = OllamaLLM(model="gemma2:2b")
 agent = initialize_agent(tools, llm, agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
