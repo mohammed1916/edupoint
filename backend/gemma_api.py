@@ -34,7 +34,7 @@ SESSION_EXPIRE_SECONDS = 60 * 60 * 24 * 5  # 5 days
 DEV_MODE = os.getenv("DEV", "true").lower() == "true"
 SECURE_COOKIE = not DEV_MODE
 
-if os.path.exists("edupoint-b1bf5-b530d165b8dd.json"):
+if os.path.exists("edupoint-b1bf5-b530d165b8dd.json") and DEV_MODE:
     cred = credentials.Certificate("edupoint-b1bf5-b530d165b8dd.json")
     firebase_admin.initialize_app(cred)
 else:
