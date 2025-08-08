@@ -34,8 +34,11 @@ SESSION_EXPIRE_SECONDS = 60 * 60 * 24 * 5  # 5 days
 DEV_MODE = os.getenv("DEV", "true").lower() == "true"
 SECURE_COOKIE = not DEV_MODE
 
-cred = credentials.Certificate("edupoint-b1bf5-b530d165b8dd.json")
-firebase_admin.initialize_app(cred)
+if os.path.exists("edupoint-b1bf5-b530d165b8dd.json"):
+    cred = credentials.Certificate("edupoint-b1bf5-b530d165b8dd.json")
+    firebase_admin.initialize_app(cred)
+else:
+    firebase_admin.initialize_app()
 
 GEMINI_API_URL = os.getenv("GEMINI_API_URL", "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
@@ -325,5 +328,5 @@ tools = [
 ]
 
 # Initialize LangChain agent (Gemma3/Ollama LLM)
-llm = OllamaLLM(model="gemma3")
+llm = OllamaLLM(model="gemma2:2b")
 agent = initialize_agent(tools, llm, agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
